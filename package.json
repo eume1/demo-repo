@@ -1,0 +1,13 @@
+{
+  "name": "My_Demo_App",
+  "version": "1.0.0",
+  "description": "Node.js app using Ansible container",
+  "author": "Emeka Ume <emeka.ume@example.com>",
+  "main": "hello.js",
+  "scripts": {
+    "start": "node hello.js"
+  },
+  "dependencies": {
+    "http": "11.10.0"
+  }
+}

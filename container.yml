@@ -1,0 +1,15 @@
+version: "2"
+settings:
+ conductor:
+  base: ubuntu:16.04
+ project_name: nodeApp
+services:
+ web:
+  from: ubuntu:16.04
+  copy: 
+  ports:
+   - 8080:8000
+  entrypoint: ["node", "hello.js"]  
+  
+  roles:
+   -  

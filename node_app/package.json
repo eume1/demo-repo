@@ -5,9 +5,9 @@
   "author": "Emeka Ume <emeka.ume@example.com>",
   "main": "hello.js",
   "scripts": {
-    "start": "node hello.js"
+     "start": "nodejs ./hello.js"
   },
   "dependencies": {
-    "http": "11.10.0"
+    "http": "0.0.0"
   }
 }

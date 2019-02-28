@@ -1,15 +1,13 @@
 version: "2"
 settings:
+ project_name: nodeApp
  conductor:
   base: ubuntu:16.04
- project_name: nodeApp
+ role_path: 
+  - ./roles/
+ 
 services:
- web:
-  from: ubuntu:16.04
-  copy: 
-  ports:
-   - 8080:8000
-  entrypoint: ["node", "hello.js"]  
-  
-  roles:
-   -  
+ MyNodeApp:
+  from: vegansk/ubuntu-java-nodejs
+  roles: 
+   - FileCopyRole

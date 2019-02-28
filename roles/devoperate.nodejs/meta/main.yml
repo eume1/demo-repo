@@ -1,0 +1,41 @@
+galaxy_info:
+  role_name: nodejs
+  author: Claude Léveillé
+  description: Installs nodejs on Linux
+
+  license: license (GPLv3)
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: EL
+      versions:
+        - 7
+    - name: Debian
+      versions:
+        - all
+
+  galaxy_tags:
+    - development
+    - container
+    - node
+    - nodejs
+    - javascript
+    - npm
+    - yarn
+    - docker
+    - debian
+    - ubuntu
+    - fedora
+    - centos
+    - ci
+    - cd
+    - devops
+
+dependencies: []

@@ -1,0 +1,44 @@
+---
+- name: Install nodejs dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+    update_cache: true
+
+- name: Add nodejs apt key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+
+- name: Add nodejs apt repository
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_{{ nodejs_major }}.x {{ ansible_distribution_release }} main'
+    filename: nodesource
+  register: nodejs_apt_repository_result
+
+- name: Purge any existing nodejs installation
+  apt:
+    name: nodejs
+    state: absent
+  when: nodejs_apt_repository_result is changed
+
+- name: Install nodejs package
+  apt:
+    name: nodejs
+    update_cache: true
+
+- block:
+    - name: Add yarn apt key
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+
+    - name: Add yarn apt repository
+      apt_repository:
+        repo: 'deb https://dl.yarnpkg.com/debian/ stable main'
+        filename: yarn
+
+    - name: Install yarn
+      apt:
+        name: yarn
+        update_cache: true
+  when: nodejs_install_yarn

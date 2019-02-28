@@ -1,0 +1,4 @@
+---
+- name: Include appropriate tasks for target host's OS
+  become: true
+  include_tasks: "{{ ansible_os_family | lower }}.yml"

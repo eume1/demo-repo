@@ -1,0 +1,95 @@
+---
+- name: Install nodejs dependencies
+  yum:
+    name:
+      - gcc-c++
+      - make
+    update_cache: true
+
+- name: Install nodesource GPG signing key
+  copy:
+    src: files/NODESOURCE-GPG-SIGNING-KEY-EL
+    dest: /etc/pki/rpm-gpg/
+    mode: 0644
+
+- name: Add EL nodejs yum repository
+  yum_repository:
+    name: nodesource
+    baseurl: 'https://rpm.nodesource.com/pub_{{ nodejs_major }}.x/el/{{ ansible_distribution_major_version }}/$basearch'
+    description: 'Node.js Packages for Enterprise Linux {{ ansible_distribution_major_version }} - $basearch'
+    failovermethod: priority
+    enabled: true
+    gpgcheck: true
+    sslverify: true
+    gpgkey: 'file:///etc/pki/rpm-gpg/NODESOURCE-GPG-SIGNING-KEY-EL'
+    file: 'nodesource-el{{ ansible_distribution_major_version }}'
+  register: nodejs_el_yum_repository_result
+  when: ansible_distribution | lower != 'fedora'
+
+- name: Add Fedora nodejs yum repository
+  yum_repository:
+    name: nodesource
+    baseurl: 'https://rpm.nodesource.com/pub_{{ nodejs_major }}.x/fc/{{ ansible_distribution_major_version }}/$basearch'
+    description: 'Node.js Packages for Fedora Linux {{ ansible_distribution_major_version }} - $basearch'
+    failovermethod: priority
+    enabled: true
+    gpgcheck: true
+    sslverify: true
+    gpgkey: 'file:///etc/pki/rpm-gpg/NODESOURCE-GPG-SIGNING-KEY-EL'
+    file: 'nodesource-fc{{ ansible_distribution_major_version }}'
+  register: nodejs_fc_yum_repository_result
+  when: ansible_distribution | lower == 'fedora'
+
+- block:
+    # 'shell' is used because 'yum' doesn't support 'autoremove' prior to Ansible 2.7.
+    - name: Purge any existing nodejs installation
+      shell: yum remove -y nodejs && yum autoremove -y && yum clean all -y
+      args:
+        warn: false
+      failed_when: false
+      changed_when: false
+
+    # This is because of a quirk in CentOS/RHEL 7 that prevents the package from installing otherwise.
+    - name: Update yum cache
+      command: yum makecache -y
+      args:
+        warn: false
+      changed_when: false
+  when: nodejs_el_yum_repository_result is changed or
+        nodejs_fc_yum_repository_result is changed
+
+- name: Install nodejs
+  yum:
+    name: nodejs
+    update_cache: true
+  register: nodejs_yum_install_result
+  until: nodejs_yum_install_result is success
+  retries: 3
+  delay: 2
+
+- block:
+    - name: Add yarn yarn yum repository
+      yum_repository:
+        name: yarn
+        description: Yarn Repository
+        file: yarn
+        baseurl: https://dl.yarnpkg.com/rpm/
+        enabled: true
+        gpgcheck: true
+        sslverify: true
+        gpgkey: https://dl.yarnpkg.com/rpm/pubkey.gpg
+      register: nodejs_yarn_yum_repository_result
+
+    # This is because of a quirk in CentOS/RHEL 7 that prevents the package from installing otherwise.
+    - name: Update yum cache
+      command: yum makecache -y
+      args:
+        warn: false
+      changed_when: false
+      when: nodejs_yarn_yum_repository_result is changed
+
+    - name: Install yarn
+      yum:
+        name: yarn
+        update_cache: yes
+  when: nodejs_install_yarn

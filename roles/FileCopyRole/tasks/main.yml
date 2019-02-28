@@ -1,0 +1,15 @@
+---
+# tasks file for FileCopyRole
+
+- name: Create Node Directory
+  file:
+   path: /demo_app/
+   state: directory
+   mode: 0777
+
+- name: Copy Node files to container path
+  copy: 
+   src: node_code/.
+   dest: /demo_app/
+   mode: 0777
+

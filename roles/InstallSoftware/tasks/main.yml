@@ -1,0 +1,18 @@
+---
+# tasks file for InstallSoftware
+
+- name: Install Curl
+  apt:
+   name: curl
+   state: present
+
+- name: Install Node.js
+  apt:
+   name: npm
+   state: present
+
+
+- name: Install Java and NPM
+  apt:
+   name: openjdk-5-jdk
+   state: present

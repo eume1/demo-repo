@@ -11,3 +11,7 @@ services:
   from: vegansk/ubuntu-java-nodejs
   roles: 
    - FileCopyRole
+  ports:
+   - 9003:9003
+  working_dir: /demo_app/
+  command: ["npm", "start"]
